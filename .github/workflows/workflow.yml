@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 9
+          java-version: 17
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v3
       - name: Build and Test
