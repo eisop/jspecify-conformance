@@ -15,11 +15,18 @@ plugins {
 }
 
 repositories {
+  // Snapshot repository for JSpecify conformance test framework
+  maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots'}
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
   mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.9
+targetCompatibility = 1.9
+
+configurations {
+  jSpecifyConformanceTests
+}
 
 dependencies {
   // Use JUnit Jupiter for testing.
@@ -28,6 +35,9 @@ dependencies {
 
   // This dependency is used by the application.
   implementation 'com.google.guava:guava:31.1-jre'
+
+  testImplementation 'org.jspecify.conformance:conformance-test-framework:0.0.0-SNAPSHOT'
+  jSpecifyConformanceTests 'org.jspecify.conformance:conformance-tests:0.0.0-SNAPSHOT'
 }
 
 spotless {
@@ -51,6 +61,10 @@ spotless {
     trimTrailingWhitespace()
     // endWithNewline() // Don't want to end empty files with a newline
   }
+}
+
+test {
+  useJUnitPlatform()
 }
 
 mainClassName = 'hello.HelloWorld'
