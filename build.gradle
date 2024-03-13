@@ -7,11 +7,13 @@
 
 plugins {
   id 'java-library'
-  id 'application'
 
   // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
   // Requires JDK 11 or higher; the plugin crashes under JDK 8.
   id 'com.diffplug.spotless' version '6.25.0'
+
+  // Checker Framework pluggable type-checking
+  id 'org.checkerframework' version '0.6.37'
 }
 
 repositories {
@@ -38,6 +40,9 @@ dependencies {
 
   testImplementation 'org.jspecify.conformance:conformance-test-framework:0.0.0-SNAPSHOT'
   jSpecifyConformanceTests 'org.jspecify.conformance:conformance-tests:0.0.0-SNAPSHOT'
+
+  testImplementation 'org.checkerframework:checker:3.42.0'
+  testImplementation 'org.checkerframework:framework-test:3.42.0'
 }
 
 spotless {
@@ -63,8 +68,64 @@ spotless {
   }
 }
 
-test {
-  useJUnitPlatform()
+// To use a locally-built Checker Framework, run gradle with "-PcfLocal".
+if (project.hasProperty('cfLocal')) {
+  def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
+  dependencies {
+    testImplementation files(cfHome + '/checker/dist/checker.jar')
+    testImplementation files(cfHome + '/checker/dist/framework.jar')
+  }
 }
 
-mainClassName = 'hello.HelloWorld'
+test {
+  exclude '**/NullnessJSpecifyConformanceTest.class'
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  jvmArgs(
+      '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
+      )
+}
+
+// Unzip JSpecify conformance tests using the artifact
+task unzipJSpecifyConformanceTestSuite(type: Copy) {
+  description 'Unzips the JSpecify conformance test suite into the build directory.'
+
+  dependsOn(configurations.jSpecifyConformanceTests)
+
+  from zipTree(configurations.jSpecifyConformanceTests.singleFile)
+  into "${buildDir}/jspecify-conformance-tests"
+}
+
+
+// Run JSpecify conformance tests
+task runJSpecifyConformanceTests(type: Test, group: 'Verification') {
+  description 'Runs the JSpecify conformance tests.'
+  include '**/NullnessJSpecifyConformanceTest.class'
+
+  shouldRunAfter test
+
+  // Conformance tests
+  inputs.files(unzipJSpecifyConformanceTestSuite)
+  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-report.txt")
+
+  doFirst {
+    systemProperties([
+      "ConformanceTest.inputs": "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests",
+      "ConformanceTest.report": "${projectDir}/src/test/resources/jspecify-conformance-test-report.txt",
+      "ConformanceTest.deps"  : fileTree("${buildDir}/jspecify-conformance-tests/deps").join(":")
+    ])
+  }
+}
+
+test.finalizedBy(runJSpecifyConformanceTests)
