@@ -21,7 +21,7 @@ import org.jspecify.conformance.ConformanceTestRunner;
 import org.jspecify.conformance.ReportedFact;
 import org.junit.jupiter.api.Test;
 
-/** An object to run the conformance tests against the EISOP Checker Framework. */
+/** A class to run the conformance tests against the EISOP Checker Framework. */
 public final class NullnessJSpecifyConformanceTest {
 
   /** Directory of the JSpecify Conformance Tests. */
