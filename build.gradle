@@ -1,0 +1,26 @@
+/*
+ * This is a build file for a downstream project for the EISOP Checker Framework
+ * that runs the JSpecify conformance tests.
+ */
+
+plugins {
+  id 'java-library'
+}
+
+repositories {
+  mavenCentral()
+}
+
+sourceCompatibility = 1.9
+targetCompatibility = 1.9
+
+dependencies {
+  // Use JUnit Jupiter for testing.
+  testImplementation libs.junit
+  testRuntimeOnly libs.junit
+}
+
+// Run JSpecify conformance tests
+test {
+  useJUnitPlatform()
+}

@@ -1,0 +1,5 @@
+[versions]
+junitVer = "5.9.1"
+
+[libraries]
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitVer" }
