@@ -28,13 +28,6 @@ configurations {
   jSpecifyConformanceTests
 }
 
-ext {
-  junitJupiterVersion = '5.9.1'
-  guavaVersion = '31.1-jre'
-  jSpecifyConformanceTestVersion = '0.0.0-SNAPSHOT'
-  checkerFrameworkVersion = '3.42.0'
-}
-
 dependencies {
   // Use JUnit Jupiter for testing.
   testImplementation libs.junit
@@ -73,7 +66,18 @@ spotless {
   }
 }
 
-tasks.withType(Test) {
+// Unzip JSpecify conformance tests using the artifact
+task unzipJSpecifyConformanceTestSuite(type: Copy) {
+  description 'Unzips the JSpecify conformance test suite into the build directory.'
+
+  dependsOn(configurations.jSpecifyConformanceTests)
+
+  from zipTree(configurations.jSpecifyConformanceTests.singleFile)
+  into "${buildDir}/jspecify-conformance-tests"
+}
+
+// Run JSpecify conformance tests
+test {
   useJUnitPlatform()
   jvmArgs(
       '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
@@ -87,23 +91,7 @@ tasks.withType(Test) {
       '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
       '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
       )
-}
 
-// Unzip JSpecify conformance tests using the artifact
-task unzipJSpecifyConformanceTestSuite(type: Copy) {
-  description 'Unzips the JSpecify conformance test suite into the build directory.'
-
-  dependsOn(configurations.jSpecifyConformanceTests)
-
-  from zipTree(configurations.jSpecifyConformanceTests.singleFile)
-  into "${buildDir}/jspecify-conformance-tests"
-}
-
-
-// Run JSpecify conformance tests
-test {
-  useJUnitPlatform()
-  
   // Conformance tests
   inputs.files(unzipJSpecifyConformanceTestSuite)
   inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-report.txt")
