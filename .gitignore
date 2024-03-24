@@ -16,6 +16,21 @@
 *.tar.gz
 *.rar
 
+# Do not ignore gradle-wrapper.jar
+!/gradle/wrapper/gradle-wrapper.jar
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+
+# Ignore vscode settings
+.vscode
+
+# Ignore any .DS_Store files
+.DS_Store
