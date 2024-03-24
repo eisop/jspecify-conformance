@@ -5,22 +5,102 @@
 
 plugins {
   id 'java-library'
+
+  // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
+  // Requires JDK 11 or higher; the plugin crashes under JDK 8.
+  id 'com.diffplug.spotless' version '6.25.0'
+
+  // Checker Framework pluggable type-checking
+  id 'org.checkerframework' version '0.6.37'
 }
 
 repositories {
+  // Snapshot repository for JSpecify conformance test framework
+  maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots'}
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
   mavenCentral()
 }
 
 sourceCompatibility = 1.9
 targetCompatibility = 1.9
 
+configurations {
+  jSpecifyConformanceTests
+}
+
 dependencies {
   // Use JUnit Jupiter for testing.
   testImplementation libs.junit
   testRuntimeOnly libs.junit
+
+  // This dependency is used by the application.
+  implementation libs.guava
+
+  testImplementation libs.jspecify.conformance.framework
+  jSpecifyConformanceTests libs.jspecify.conformance.tests
+
+  testImplementation libs.checkerframework.checker
+  testImplementation libs.checkerframework.framework
+}
+
+spotless {
+  format 'misc', {
+    // define the files to apply `misc` to
+    target '*.md', '.gitignore'
+
+    // define the steps to apply to those files
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    googleJavaFormat()
+    formatAnnotations()
+  }
+  groovyGradle {
+    target '**/*.gradle'
+    greclipse()  // which formatter Spotless should use to format .gradle files.
+    indentWithSpaces(2)
+    trimTrailingWhitespace()
+    // endWithNewline() // Don't want to end empty files with a newline
+  }
+}
+
+// Unzip JSpecify conformance tests using the artifact
+task unzipJSpecifyConformanceTestSuite(type: Copy) {
+  description 'Unzips the JSpecify conformance test suite into the build directory.'
+
+  dependsOn(configurations.jSpecifyConformanceTests)
+
+  from zipTree(configurations.jSpecifyConformanceTests.singleFile)
+  into "${buildDir}/jspecify-conformance-tests"
 }
 
 // Run JSpecify conformance tests
 test {
   useJUnitPlatform()
+  jvmArgs(
+      '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+      '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+      '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
+      )
+
+  // Conformance tests
+  inputs.files(unzipJSpecifyConformanceTestSuite)
+  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-report.txt")
+
+  doFirst {
+    systemProperties([
+      "ConformanceTest.inputs": "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests",
+      "ConformanceTest.report": "${projectDir}/src/test/resources/jspecify-conformance-test-report.txt",
+      "ConformanceTest.deps"  : fileTree("${buildDir}/jspecify-conformance-tests/deps").join(":")
+    ])
+  }
 }
