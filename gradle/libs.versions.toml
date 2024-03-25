@@ -2,12 +2,12 @@
 junitVer = "5.9.1"
 guavaVer = "31.1-jre"
 jSpecifyConformanceTestVer = "0.0.0-SNAPSHOT"
-checkerFrameworkVer = "3.42.0"
+checkerFrameworkVer = "3.42.0-eisop3"
 
 [libraries]
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitVer" }
 guava = { module = "com.google.guava:guava", version.ref = "guavaVer" }
 jspecify-conformance-tests = { module = "org.jspecify.conformance:conformance-tests", version.ref = "jSpecifyConformanceTestVer" }
 jspecify-conformance-framework = { module = "org.jspecify.conformance:conformance-test-framework", version.ref = "jSpecifyConformanceTestVer" }
-checkerframework-checker = { module = "org.checkerframework:checker", version.ref = "checkerFrameworkVer" }
-checkerframework-framework = { module = "org.checkerframework:framework-test", version.ref = "checkerFrameworkVer" }
+checkerframework-checker = { module = "io.github.eisop:checker", version.ref = "checkerFrameworkVer" }
+checkerframework-framework = { module = "io.github.eisop:framework-test", version.ref = "checkerFrameworkVer" }
