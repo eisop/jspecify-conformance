@@ -41,6 +41,7 @@ dependencies {
 
   testImplementation libs.checkerframework.checker
   testImplementation libs.checkerframework.framework
+  testImplementation libs.checkerframework.qual
 }
 
 spotless {
