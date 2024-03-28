@@ -10,4 +10,4 @@ guava = { module = "com.google.guava:guava", version.ref = "guavaVer" }
 jspecify-conformance-tests = { module = "org.jspecify.conformance:conformance-tests", version.ref = "jSpecifyConformanceTestVer" }
 jspecify-conformance-framework = { module = "org.jspecify.conformance:conformance-test-framework", version.ref = "jSpecifyConformanceTestVer" }
 checkerframework-checker = { module = "org.checkerframework:checker", version.ref = "checkerFrameworkVer" }
-checkerframework-framework = { module = "org.checkerframework:framework-test", version.ref = "checkerFrameworkVer" }
+checkerframework-framework-test = { module = "org.checkerframework:framework-test", version.ref = "checkerFrameworkVer" }

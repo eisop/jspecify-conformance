@@ -40,7 +40,7 @@ dependencies {
   jSpecifyConformanceTests libs.jspecify.conformance.tests
 
   testImplementation libs.checkerframework.checker
-  testImplementation libs.checkerframework.framework
+  testImplementation libs.checkerframework.framework.test
 }
 
 // To use a locally-built Checker Framework, run gradle with "-PcfLocal".
@@ -48,11 +48,7 @@ if (hasProperty('cfLocal')) {
   def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
   dependencies {
     testImplementation files(cfHome + '/checker/dist/checker.jar')
-    testImplementation files(cfHome + '/framework-test/build/libs/framework-test-3.42.0-eisop3-SNAPSHOT.jar')
-    testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
-    
-    // Need plume-util dependency to typecheck conformance tests 
-    testImplementation 'org.plumelib:plume-util:1.9.0'
+    testImplementation files(cfHome + '/framework-test/build/libs/framework-test-3.42.0-eisop3-SNAPSHOT.jar')    
   }
 }
 
