@@ -41,6 +41,7 @@ dependencies {
 
   testImplementation libs.checkerframework.checker
   testImplementation libs.checkerframework.framework.test
+  testImplementation libs.checkerframework.qual
 }
 
 // To use a locally-built Checker Framework, run gradle with "-PcfLocal".
