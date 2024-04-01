@@ -10,5 +10,5 @@ guava = { module = "com.google.guava:guava", version.ref = "guavaVer" }
 jspecify-conformance-tests = { module = "org.jspecify.conformance:conformance-tests", version.ref = "jSpecifyConformanceTestVer" }
 jspecify-conformance-framework = { module = "org.jspecify.conformance:conformance-test-framework", version.ref = "jSpecifyConformanceTestVer" }
 checkerframework-checker = { module = "io.github.eisop:checker", version.ref = "checkerFrameworkVer" }
-checkerframework-framework = { module = "io.github.eisop:framework-test", version.ref = "checkerFrameworkVer" }
+checkerframework-framework-test = { module = "io.github.eisop:framework-test", version.ref = "checkerFrameworkVer" }
 checkerframework-qual = { module = "io.github.eisop:checker-qual", version.ref = "checkerFrameworkVer" }

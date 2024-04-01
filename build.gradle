@@ -40,7 +40,7 @@ dependencies {
   jSpecifyConformanceTests libs.jspecify.conformance.tests
 
   testImplementation libs.checkerframework.checker
-  testImplementation libs.checkerframework.framework
+  testImplementation libs.checkerframework.framework.test
   testImplementation libs.checkerframework.qual
 }
 
