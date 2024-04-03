@@ -49,7 +49,6 @@ if (hasProperty('cfLocal')) {
   def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
   dependencies {
     testImplementation files(cfHome + '/checker/dist/checker.jar')
-    testImplementation files(cfHome + '/framework-test/build/libs/framework-test-3.42.0-eisop3-SNAPSHOT.jar')    
   }
 }
 
