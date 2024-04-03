@@ -7,6 +7,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -76,7 +78,7 @@ public final class NullnessJSpecifyConformanceTest {
    * @param deps the dependencies of the conformance tests.
    */
   private static ImmutableSet<ReportedFact> analyze(
-      Path testDir, ImmutableList<Path> files, ImmutableList<Path> deps) {
+      Path testDir, ImmutableSortedSet<Path> files, ImmutableList<Path> deps) {
     ImmutableSet<File> fileInputs = files.stream().map(Path::toFile).collect(toImmutableSet());
 
     ImmutableList<String> depsAsStrings =
