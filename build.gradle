@@ -49,6 +49,11 @@ if (hasProperty('cfLocal')) {
   def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
   dependencies {
     testImplementation files(cfHome + '/checker/dist/checker.jar')
+    testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
+    testImplementation fileTree(dir: cfHome + '/framework-test/build/libs',
+                                include: '*.jar',
+                                exclude: ['*-sources.jar', '*-javadoc.jar'])
+    testImplementation libs.plume.utils
   }
 }
 
