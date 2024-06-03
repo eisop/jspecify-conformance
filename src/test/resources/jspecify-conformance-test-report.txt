@@ -1,5 +1,5 @@
 # 14 pass; 100 fail; 114 total; 12.3% score
-PASS: Basic.java:28:test:expression-type:Object?:nullable
+FAIL: Basic.java:28:test:expression-type:Object?:nullable
 FAIL: Basic.java:28:test:sink-type:Object!:return
 FAIL: Basic.java:28:test:cannot-convert:Object? to Object!
 FAIL: Basic.java:34:test:expression-type:Object!:nonNull
