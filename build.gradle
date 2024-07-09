@@ -112,4 +112,11 @@ test {
       "ConformanceTest.deps"  : fileTree("${buildDir}/jspecify-conformance-tests/deps").join(":")
     ])
   }
+
+  testLogging {
+    showStackTraces = false
+    showStandardStreams = true
+    events "failed"
+    exceptionFormat "full"
+  }
 }
