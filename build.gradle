@@ -21,8 +21,10 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = 1.9
-targetCompatibility = 1.9
+java {
+  sourceCompatibility = 1.9
+  targetCompatibility = 1.9
+}
 
 configurations {
   jSpecifyConformanceTests
@@ -31,7 +33,7 @@ configurations {
 dependencies {
   // Use JUnit Jupiter for testing.
   testImplementation libs.junit
-  testRuntimeOnly libs.junit
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
   testImplementation libs.jspecify.conformance.framework
   jSpecifyConformanceTests libs.jspecify.conformance.tests
@@ -45,9 +47,12 @@ if (hasProperty('cfLocal')) {
     testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
 
     def frameworkTestTree = fileTree(dir: cfHome + '/framework-test/build/libs',
-                                    include: '*.jar',
-                                    exclude: ['*-sources.jar', '*-javadoc.jar'])
-                                    
+    include: '*.jar',
+    exclude: [
+      '*-sources.jar',
+      '*-javadoc.jar'
+    ])
+
     if (frameworkTestTree.files.size() != 1) {
       logger.warn("Expected exactly one framework-test jar, but found " + frameworkTestTree.files.size() + " jars.")
     }
