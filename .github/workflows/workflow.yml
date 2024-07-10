@@ -6,7 +6,9 @@ on: [push, pull_request]
 jobs:
   # This job will build and test the JSpecify Conformance Tests on the Checker Framework
   build-and-test:
-    # The type of runner that the job will run on
+    strategy:
+      matrix:
+        jdk: [ 11, 17, 21 ]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -21,8 +23,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: ${{matrix.jdk}}
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
       - name: Build and Test
         run: gradle test

@@ -9,7 +9,7 @@ with the [EISOP Nullness Checker](https://eisop.github.io/cf/manual/#nullness-ch
 
 ## Prerequisites
 
-- Java 8 or higher
+- Java 9 or higher
 
 ## Running the Tests
 
