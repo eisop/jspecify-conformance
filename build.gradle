@@ -11,7 +11,7 @@ plugins {
   id 'com.diffplug.spotless' version '6.25.0'
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.6.37'
+  id 'org.checkerframework' version '0.6.42'
 }
 
 repositories {
@@ -111,5 +111,22 @@ test {
       "ConformanceTest.report": "${projectDir}/src/test/resources/jspecify-conformance-test-report.txt",
       "ConformanceTest.deps"  : fileTree("${buildDir}/jspecify-conformance-tests/deps").join(":")
     ])
+  }
+
+  // Conformance tests on samples
+  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt")
+
+  doFirst {
+    systemProperties([
+      "ConformanceTest.samples.inputs": "${buildDir}/jspecify-conformance-tests/samples",
+      "ConformanceTest.samples.report": "${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt",
+    ])
+  }
+
+  testLogging {
+    showStackTraces = false
+    showStandardStreams = true
+    events "failed"
+    exceptionFormat "full"
   }
 }
