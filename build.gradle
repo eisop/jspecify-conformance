@@ -113,6 +113,16 @@ test {
     ])
   }
 
+  // Conformance tests on samples
+  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt")
+
+  doFirst {
+    systemProperties([
+      "ConformanceTest.samples.inputs": "${buildDir}/jspecify-conformance-tests/samples",
+      "ConformanceTest.samples.report": "${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt",
+    ])
+  }
+
   testLogging {
     showStackTraces = false
     showStandardStreams = true

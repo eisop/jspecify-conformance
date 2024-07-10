@@ -31,6 +31,12 @@ public final class NullnessJSpecifyConformanceTest {
   /** Location of the report. */
   private final Path reportPath;
 
+  /** Directory of the JSpecify Conformance Tests for samples. */
+  private final Path testDirSamples;
+
+  /** Location of the report for samples. */
+  private final Path reportPathSamples;
+
   /** JSpecify conformance test dependencies. */
   private final ImmutableList<Path> deps;
 
@@ -42,6 +48,8 @@ public final class NullnessJSpecifyConformanceTest {
   public NullnessJSpecifyConformanceTest() {
     this.testDir = getSystemPropertyPath("ConformanceTest.inputs");
     this.reportPath = getSystemPropertyPath("ConformanceTest.report");
+    this.testDirSamples = getSystemPropertyPath("ConformanceTest.samples.inputs");
+    this.reportPathSamples = getSystemPropertyPath("ConformanceTest.samples.report");
     this.deps =
         Splitter.on(":").splitToList(System.getProperty("ConformanceTest.deps")).stream()
             .map(dep -> Paths.get(dep))
@@ -67,6 +75,14 @@ public final class NullnessJSpecifyConformanceTest {
     ConformanceTestRunner runner =
         new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
     runner.checkConformance(testDir, deps, reportPath);
+  }
+
+  /** Run the conformance tests on the samples. */
+  @Test
+  public void conformanceTestsOnSamples() throws IOException {
+    ConformanceTestRunner runner =
+        new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
+    runner.checkConformance(testDirSamples, deps, reportPathSamples);
   }
 
   /**
