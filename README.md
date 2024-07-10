@@ -3,6 +3,10 @@
 This repository runs the [JSpecify conformance tests](https://github.com/jspecify/jspecify/tree/main/conformance-tests)
 with the [EISOP Nullness Checker](https://eisop.github.io/cf/manual/#nullness-checker).
 
+[Results on JSpecify conformance tests](src/test/resources/jspecify-conformance-test-report.txt).
+
+[Results on JSpecify sample tests](src/test/resources/jspecify-conformance-test-on-samples-report.txt).
+
 ## Prerequisites
 
 - Java 8 or higher
