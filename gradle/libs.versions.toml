@@ -1,6 +1,6 @@
 [versions]
-junitVer = "5.9.1"
-guavaVer = "31.1-jre"
+junitVer = "5.10.3"
+guavaVer = "33.2.1-jre"
 jSpecifyConformanceTestVer = "0.0.0-SNAPSHOT"
 checkerFrameworkVer = "3.42.0-eisop3"
 plumeUtilVer = "1.9.0"
