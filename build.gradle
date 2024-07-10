@@ -33,15 +33,8 @@ dependencies {
   testImplementation libs.junit
   testRuntimeOnly libs.junit
 
-  // This dependency is used by the application.
-  implementation libs.guava
-
   testImplementation libs.jspecify.conformance.framework
   jSpecifyConformanceTests libs.jspecify.conformance.tests
-
-  testImplementation libs.checkerframework.checker
-  testImplementation libs.checkerframework.framework.test
-  testImplementation libs.checkerframework.qual
 }
 
 // To use a locally-built Checker Framework, run gradle with "-PcfLocal".
@@ -49,6 +42,23 @@ if (hasProperty('cfLocal')) {
   def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
   dependencies {
     testImplementation files(cfHome + '/checker/dist/checker.jar')
+    testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
+
+    def frameworkTestTree = fileTree(dir: cfHome + '/framework-test/build/libs',
+                                    include: '*.jar',
+                                    exclude: ['*-sources.jar', '*-javadoc.jar'])
+                                    
+    if (frameworkTestTree.files.size() != 1) {
+      logger.warn("Expected exactly one framework-test jar, but found " + frameworkTestTree.files.size() + " jars.")
+    }
+    testImplementation frameworkTestTree
+    testImplementation libs.plume.utils
+  }
+} else {
+  dependencies {
+    testImplementation libs.checkerframework.checker
+    testImplementation libs.checkerframework.framework.test
+    testImplementation libs.checkerframework.qual
   }
 }
 
