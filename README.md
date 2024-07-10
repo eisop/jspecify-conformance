@@ -1,6 +1,7 @@
 ## JSpecify Conformance Tests with the EISOP Checker Framework
 
-This repository runs the JSpecify conformance tests with the EISOP Nullness Checker.
+This repository runs the [JSpecify conformance tests](https://github.com/jspecify/jspecify/tree/main/conformance-tests)
+with the [EISOP Nullness Checker](https://eisop.github.io/cf/manual/#nullness-checker).
 
 ## Prerequisites
 
