@@ -2,7 +2,7 @@
 junitVer = "5.10.3"
 guavaVer = "33.2.1-jre"
 jSpecifyConformanceTestVer = "0.0.0-SNAPSHOT"
-checkerFrameworkVer = "3.42.0-eisop3"
+checkerFrameworkVer = "3.42.0-eisop4"
 plumeUtilVer = "1.9.3"
 
 [libraries]
