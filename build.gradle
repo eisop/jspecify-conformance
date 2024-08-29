@@ -70,7 +70,7 @@ if (hasProperty('cfLocal')) {
 spotless {
   format 'misc', {
     // define the files to apply `misc` to
-    target '**/*.md', '.gitignore'
+    target '*.md', '.gitignore'
 
     // define the steps to apply to those files
     trimTrailingWhitespace()
@@ -116,6 +116,7 @@ test {
       '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
       )
 
+  // Conformance tests
   inputs.files(unzipJSpecifyConformanceTestSuite)
   inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-report.txt")
 
@@ -127,6 +128,7 @@ test {
     ])
   }
 
+  // Conformance tests on samples
   inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt")
 
   doFirst {
