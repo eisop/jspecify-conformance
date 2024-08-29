@@ -70,7 +70,7 @@ if (hasProperty('cfLocal')) {
 spotless {
   format 'misc', {
     // define the files to apply `misc` to
-    target '*.md', '.gitignore', 'README.md'
+    target '**/*.md', '.gitignore'
 
     // define the steps to apply to those files
     trimTrailingWhitespace()
@@ -154,7 +154,11 @@ test {
           def lineNumber = match[2].toInteger()
           println "Test failed in file: ${fileName}"
           println "Test failed at line number: ${lineNumber}"
-          def filePath = "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests/${fileName}"
+          def conformanceInputs = System.getProperty('ConformanceTest.inputs')
+          if (conformanceInputs == null) {
+            conformanceInputs = "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests"
+          }
+          def filePath = "${conformanceInputs}/${fileName}"
           println "Test failed directory: ${filePath}"
           def file = new File(filePath)
           if (file.exists()) {
@@ -175,6 +179,3 @@ test {
   }
 }
 
-
-
-// println "Raw Failure Details: ${rawFailure}"
