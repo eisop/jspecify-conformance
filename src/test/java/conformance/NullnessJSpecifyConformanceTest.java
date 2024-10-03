@@ -29,7 +29,6 @@ public final class NullnessJSpecifyConformanceTest {
   private static final ImmutableList<String> TEST_OPTIONS =
       ImmutableList.of("-AassumePure", "-Adetailedmsgtext");
 
-  /** Compiler Provided Default Ctor is fine */
 
   /** Run the conformance tests. */
   @Test
@@ -50,11 +49,11 @@ public final class NullnessJSpecifyConformanceTest {
   }
 
   /**
-   * Runs the conformance tests to run for the specified test directory and report path.
+   * Runs the conformance tests with the specified test directory and report path.
    *
-   * @param testDirProperty The system property key for the test directory path.
-   * @param reportPathProperty The system property key for the report file path.
-   * @param depsProperty The system property key for dependencies, or null if no dependencies are required.
+   * @param testDirProperty the system property key for the test directory path
+   * @param reportPathProperty the system property key for the report file path
+   * @param depsProperty the system property key for dependencies, or null if no dependencies are required
    */
   private void runConformanceTests(String testDirProperty, String reportPathProperty, String depsProperty) throws IOException {
       Path testDir = getSystemPropertyPath(testDirProperty);
