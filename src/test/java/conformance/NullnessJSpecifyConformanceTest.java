@@ -25,35 +25,45 @@ import org.junit.jupiter.api.Test;
 /** A class to run the conformance tests against the EISOP Checker Framework. */
 public final class NullnessJSpecifyConformanceTest {
 
-  /** Directory of the JSpecify Conformance Tests. */
-  private final Path testDir;
-
-  /** Location of the report. */
-  private final Path reportPath;
-
-  /** Directory of the JSpecify Conformance Tests for samples. */
-  private final Path testDirSamples;
-
-  /** Location of the report for samples. */
-  private final Path reportPathSamples;
-
-  /** JSpecify conformance test dependencies. */
-  private final ImmutableList<Path> deps;
-
   /** Options to pass to the checker. */
   private static final ImmutableList<String> TEST_OPTIONS =
       ImmutableList.of("-AassumePure", "-Adetailedmsgtext");
 
-  /** Create a NullnessJSpecifyConformanceTest. */
-  public NullnessJSpecifyConformanceTest() {
-    this.testDir = getSystemPropertyPath("ConformanceTest.inputs");
-    this.reportPath = getSystemPropertyPath("ConformanceTest.report");
-    this.testDirSamples = getSystemPropertyPath("ConformanceTest.samples.inputs");
-    this.reportPathSamples = getSystemPropertyPath("ConformanceTest.samples.report");
-    this.deps =
-        Splitter.on(":").splitToList(System.getProperty("ConformanceTest.deps")).stream()
-            .map(dep -> Paths.get(dep))
-            .collect(toImmutableList());
+
+  /** Run the conformance tests. */
+  @Test
+  public void conformanceTests() throws IOException {
+    runConformanceTests(
+      "ConformanceTest.inputs",
+      "ConformanceTest.report",
+      "ConformanceTest.deps");
+  }
+
+  /** Run the conformance tests on the samples. */
+  @Test
+  public void conformanceTestsOnSamples() throws IOException {
+    runConformanceTests(
+      "ConformanceTest.samples.inputs",
+      "ConformanceTest.samples.report",
+      null);  // No deps needed for conformance samples
+  }
+
+  /**
+   * Runs the conformance tests with the specified test directory and report path.
+   *
+   * @param testDirProperty the system property key for the test directory path
+   * @param reportPathProperty the system property key for the report file path
+   * @param depsProperty the system property key for dependencies, or null if no dependencies are required
+   */
+  private void runConformanceTests(String testDirProperty, String reportPathProperty, String depsProperty) throws IOException {
+      Path testDir = getSystemPropertyPath(testDirProperty);
+      Path reportPath = getSystemPropertyPath(reportPathProperty);
+      ImmutableList<Path> deps = depsProperty != null ?
+        Splitter.on(":").splitToList(depsProperty).stream().map(Paths::get).collect(toImmutableList()) :
+          ImmutableList.of(); // for conformance samples, creates an empty immutable list
+
+      ConformanceTestRunner runner = new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
+      runner.checkConformance(testDir, deps, reportPath);
   }
 
   /**
@@ -67,22 +77,6 @@ public final class NullnessJSpecifyConformanceTest {
       throw new IllegalArgumentException("System property " + propertyName + " not set");
     }
     return Paths.get(path);
-  }
-
-  /** Run the conformance tests. */
-  @Test
-  public void conformanceTests() throws IOException {
-    ConformanceTestRunner runner =
-        new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
-    runner.checkConformance(testDir, deps, reportPath);
-  }
-
-  /** Run the conformance tests on the samples. */
-  @Test
-  public void conformanceTestsOnSamples() throws IOException {
-    ConformanceTestRunner runner =
-        new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
-    runner.checkConformance(testDirSamples, deps, reportPathSamples);
   }
 
   /**
