@@ -139,9 +139,44 @@ test {
   }
 
   testLogging {
-    showStackTraces = false
+    showStackTraces = true
     showStandardStreams = true
     events "failed"
     exceptionFormat "full"
+  }
+
+  afterTest { desc, result ->
+    if (result.resultType == TestResult.ResultType.FAILURE) {
+      println "Oh no! There are failed conformance tests!"
+      result.failures.each { failure ->
+        def rawFailure = failure.rawFailure
+        def matcher = rawFailure =~ /\+FAIL: (\S+):(\d+):/
+        matcher.each { match ->
+          def fileName = match[1]
+          def lineNumber = match[2].toInteger()
+          println "Test failed in file: ${fileName}"
+          println "Test failed at line number: ${lineNumber}"
+          def conformanceInputs = System.getProperty('ConformanceTest.inputs')
+          if (conformanceInputs == null) {
+            conformanceInputs = "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests"
+          }
+          def filePath = "${conformanceInputs}/${fileName}"
+          println "Test failed directory: ${filePath}"
+          def file = new File(filePath)
+          if (file.exists()) {
+            def lines = file.readLines()
+            def start = Math.max(0, lineNumber - 3)
+            def end = Math.min(lines.size(), lineNumber + 2)
+            println "Code around the failure:"
+            for (int i = start; i < end; i++) {
+              println "${i + 1}: ${lines[i]}"
+            }
+            println ""
+          } else {
+            println "File not found: ${filePath}"
+          }
+        }
+      }
+    }
   }
 }
