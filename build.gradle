@@ -147,7 +147,7 @@ test {
 
   afterTest { desc, result ->
     if (result.resultType == TestResult.ResultType.FAILURE) {
-      println "Oh No! There's tests failed!"
+      println "Oh no! There are failed conformance tests!"
       result.failures.each { failure ->
         def rawFailure = failure.rawFailure
         def matcher = rawFailure =~ /\+FAIL: (\S+):(\d+):/
