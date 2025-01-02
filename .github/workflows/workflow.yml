@@ -27,4 +27,4 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build and Test
-        run: gradle test
+        run: gradle build test
