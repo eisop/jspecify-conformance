@@ -16,8 +16,8 @@ plugins {
 
 repositories {
   // Snapshot repository for JSpecify conformance test framework
-  maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots'}
-  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+  maven { url = 'https://s01.oss.sonatype.org/content/repositories/snapshots'}
+  maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/'}
   mavenCentral()
 }
 
@@ -92,7 +92,7 @@ spotless {
 
 // Unzip JSpecify conformance tests using the artifact
 task unzipJSpecifyConformanceTestSuite(type: Copy) {
-  description 'Unzips the JSpecify conformance test suite into the build directory.'
+  description = 'Unzips the JSpecify conformance test suite into the build directory.'
 
   dependsOn(configurations.jSpecifyConformanceTests)
 
@@ -142,7 +142,7 @@ test {
     showStackTraces = true
     showStandardStreams = true
     events "failed"
-    exceptionFormat "full"
+    exceptionFormat = "full"
   }
 
   afterTest { desc, result ->

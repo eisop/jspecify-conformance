@@ -29,23 +29,19 @@ public final class NullnessJSpecifyConformanceTest {
   private static final ImmutableList<String> TEST_OPTIONS =
       ImmutableList.of("-AassumePure", "-Adetailedmsgtext");
 
-
   /** Run the conformance tests. */
   @Test
   public void conformanceTests() throws IOException {
-    runConformanceTests(
-      "ConformanceTest.inputs",
-      "ConformanceTest.report",
-      "ConformanceTest.deps");
+    runConformanceTests("ConformanceTest.inputs", "ConformanceTest.report", "ConformanceTest.deps");
   }
 
   /** Run the conformance tests on the samples. */
   @Test
   public void conformanceTestsOnSamples() throws IOException {
     runConformanceTests(
-      "ConformanceTest.samples.inputs",
-      "ConformanceTest.samples.report",
-      null);  // No deps needed for conformance samples
+        "ConformanceTest.samples.inputs",
+        "ConformanceTest.samples.report",
+        null); // No deps needed for conformance samples
   }
 
   /**
@@ -53,17 +49,23 @@ public final class NullnessJSpecifyConformanceTest {
    *
    * @param testDirProperty the system property key for the test directory path
    * @param reportPathProperty the system property key for the report file path
-   * @param depsProperty the system property key for dependencies, or null if no dependencies are required
+   * @param depsProperty the system property key for dependencies, or null if no dependencies are
+   *     required
    */
-  private void runConformanceTests(String testDirProperty, String reportPathProperty, String depsProperty) throws IOException {
-      Path testDir = getSystemPropertyPath(testDirProperty);
-      Path reportPath = getSystemPropertyPath(reportPathProperty);
-      ImmutableList<Path> deps = depsProperty != null ?
-        Splitter.on(":").splitToList(depsProperty).stream().map(Paths::get).collect(toImmutableList()) :
-          ImmutableList.of(); // for conformance samples, creates an empty immutable list
+  private void runConformanceTests(
+      String testDirProperty, String reportPathProperty, String depsProperty) throws IOException {
+    Path testDir = getSystemPropertyPath(testDirProperty);
+    Path reportPath = getSystemPropertyPath(reportPathProperty);
+    ImmutableList<Path> deps =
+        depsProperty != null
+            ? Splitter.on(":").splitToList(depsProperty).stream()
+                .map(Paths::get)
+                .collect(toImmutableList())
+            : ImmutableList.of(); // for conformance samples, creates an empty immutable list
 
-      ConformanceTestRunner runner = new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
-      runner.checkConformance(testDir, deps, reportPath);
+    ConformanceTestRunner runner =
+        new ConformanceTestRunner(NullnessJSpecifyConformanceTest::analyze);
+    runner.checkConformance(testDir, deps, reportPath);
   }
 
   /**
