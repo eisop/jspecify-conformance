@@ -1,5 +1,5 @@
 [versions]
-junitVer = "5.11.3"
+junitVer = "5.11.4"
 guavaVer = "33.3.1-jre"
 jSpecifyConformanceTestVer = "0.0.0-SNAPSHOT"
 checkerFrameworkVer = "3.42.0-eisop4"
