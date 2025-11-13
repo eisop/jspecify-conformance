@@ -3,7 +3,7 @@ junitVer = "5.13.4"
 guavaVer = "33.4.8-jre"
 jSpecifyConformanceTestVer = "0.0.0-SNAPSHOT"
 checkerFrameworkVer = "3.49.3-eisop1"
-plumeUtilVer = "1.11.0"
+plumeUtilVer = "1.12.2"
 
 [libraries]
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitVer" }
