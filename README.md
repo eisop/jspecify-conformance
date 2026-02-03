@@ -29,5 +29,10 @@ with the [EISOP Nullness Checker](https://eisop.github.io/cf/manual/#nullness-ch
    ./gradlew test
    ```
 
+4. Update the conformance test results:
+   ```bash
+   JSPECIFY_CONFORMANCE_TEST_MODE=write ./gradlew test
+   ```
+
 The project uses a custom test runner, `ConformanceTestRunner`, which is invoked in the `NullnessJSpecifyConformanceTest`.
 This runner checks the conformance of the EISOP Nullness Checker against the JSpecify Conformance Tests.
