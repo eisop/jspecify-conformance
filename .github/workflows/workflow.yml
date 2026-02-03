@@ -32,6 +32,6 @@ jobs:
       - name: Inject JAVA_HOME_21_64 into `gradle.properties` to always use JDK 21 for Gradle
         run: mkdir ~/.gradle && echo "org.gradle.java.home=$JAVA_HOME_21_X64" >> ~/.gradle/gradle.properties
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Build and Test
         run: gradle build test
