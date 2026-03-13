@@ -93,7 +93,7 @@ task unzipJSpecifyConformanceTestSuite(type: Copy) {
   dependsOn(configurations.jSpecifyConformanceTests)
 
   from zipTree(configurations.jSpecifyConformanceTests.singleFile)
-  into "${buildDir}/jspecify-conformance-tests"
+  into layout.buildDirectory.dir("jspecify-conformance-tests")
 }
 
 // Run JSpecify conformance tests
@@ -112,25 +112,30 @@ test {
       '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
       )
 
+  // Capture at configuration time to avoid referencing project in execution-time closures.
+  def buildDirPath = layout.buildDirectory.get().asFile.absolutePath
+  def projectDirPath = projectDir.absolutePath
+
   // Conformance tests
   inputs.files(unzipJSpecifyConformanceTestSuite)
-  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-report.txt")
+  inputs.files("${projectDirPath}/src/test/resources/jspecify-conformance-test-report.txt")
 
   doFirst {
     systemProperties([
-      "ConformanceTest.inputs": "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests",
-      "ConformanceTest.report": "${projectDir}/src/test/resources/jspecify-conformance-test-report.txt",
-      "ConformanceTest.deps"  : fileTree("${buildDir}/jspecify-conformance-tests/deps").join(":")
+      "ConformanceTest.inputs": "${buildDirPath}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests",
+      "ConformanceTest.report": "${projectDirPath}/src/test/resources/jspecify-conformance-test-report.txt",
+      // listFiles() returns null if the directory doesn't exist; the null-safe operators return "" in that case.
+      "ConformanceTest.deps"  : new File("${buildDirPath}/jspecify-conformance-tests/deps").listFiles()?.collect { it.absolutePath }?.join(":") ?: ""
     ])
   }
 
   // Conformance tests on samples
-  inputs.files("${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt")
+  inputs.files("${projectDirPath}/src/test/resources/jspecify-conformance-test-on-samples-report.txt")
 
   doFirst {
     systemProperties([
-      "ConformanceTest.samples.inputs": "${buildDir}/jspecify-conformance-tests/samples",
-      "ConformanceTest.samples.report": "${projectDir}/src/test/resources/jspecify-conformance-test-on-samples-report.txt",
+      "ConformanceTest.samples.inputs": "${buildDirPath}/jspecify-conformance-tests/samples",
+      "ConformanceTest.samples.report": "${projectDirPath}/src/test/resources/jspecify-conformance-test-on-samples-report.txt",
     ])
   }
 
@@ -158,7 +163,7 @@ test {
                 println "Test failed at line number: ${lineNumber}"
                 def conformanceInputs = System.getProperty('ConformanceTest.inputs')
                 if (conformanceInputs == null) {
-                  conformanceInputs = "${buildDir}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests"
+                  conformanceInputs = "${buildDirPath}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests"
                 }
                 def filePath = "${conformanceInputs}/${fileName}"
                 println "Test failed directory: ${filePath}"
