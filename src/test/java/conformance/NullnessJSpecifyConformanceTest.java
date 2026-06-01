@@ -58,7 +58,7 @@ public final class NullnessJSpecifyConformanceTest {
     Path reportPath = getSystemPropertyPath(reportPathProperty);
     ImmutableList<Path> deps =
         depsProperty != null
-            ? Splitter.on(":").splitToList(depsProperty).stream()
+            ? Splitter.on(':').omitEmptyStrings().splitToList(depsProperty).stream()
                 .map(Paths::get)
                 .collect(toImmutableList())
             : ImmutableList.of(); // for conformance samples, creates an empty immutable list
