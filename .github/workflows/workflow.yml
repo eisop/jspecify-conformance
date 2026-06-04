@@ -33,23 +33,69 @@ jobs:
         run: mkdir ~/.gradle && echo "org.gradle.java.home=$JAVA_HOME_21_X64" >> ~/.gradle/gradle.properties
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
-      # The conformance test framework and test suite are only published as
+      # The JSpecify conformance artifacts are only ever published as
       # org.jspecify.conformance:*:0.0.0-SNAPSHOT, and Central Portal snapshots are deleted after
-      # 90 days. To keep this build independent of whether upstream is currently re-publishing that
-      # snapshot, build it from a JSpecify checkout and install it into the local Maven repository,
-      # where build.gradle's mavenLocal() repository can find it.
+      # 90 days, so the remote snapshot can vanish whenever upstream stops re-publishing it. To keep
+      # this build reproducible, build both artifacts from source and install them into the local
+      # Maven repository (~/.m2), where build.gradle's mavenLocal() repository can find them.
+      #
+      # The two artifacts live in DIFFERENT repositories:
+      #   - org.jspecify.conformance:conformance-tests          -> jspecify/jspecify (the test ZIP)
+      #   - org.jspecify.conformance:conformance-test-framework -> jspecify/jspecify-reference-checker
+      #
+      # An init script (a) ensures the maven-publish plugin is applied — the framework's build.gradle
+      # uses a publishing {} block but relies on the reference checker's root build to apply the
+      # plugin, which is absent when we build it standalone — and (b) disables Sign tasks, since the
+      # local Maven repository needs no signatures and CI has no GPG signatory.
+      - name: Create publish-helper init script
+        run: |
+          cat > "$RUNNER_TEMP/publish-helper.gradle" <<'INIT'
+          allprojects {
+            pluginManager.apply('maven-publish')
+            tasks.withType(Sign).configureEach { enabled = false }
+          }
+          INIT
+
+      # conformance-tests (the assertions/samples ZIP) comes from the main JSpecify repo.
       - name: Check out JSpecify
         uses: actions/checkout@v6
         with:
           repository: jspecify/jspecify
           path: jspecify
-      - name: Build and install the JSpecify conformance snapshot
+      - name: Build and install conformance-tests
         working-directory: jspecify
-        # Disable any Sign tasks: the local Maven repository does not need signatures, and CI has
-        # no GPG signatory configured. This keeps publishToMavenLocal working regardless of how
-        # upstream configures signing.
+        run: ./gradlew --init-script "$RUNNER_TEMP/publish-helper.gradle" :conformance-tests:publishToMavenLocal
+
+      # conformance-test-framework (the Java runner library) is a subproject of the reference
+      # checker. Its own build.gradle has no checker-framework dependency and declares no
+      # project(...) dependencies, but the reference checker's ROOT build.gradle does (it calls
+      # gradle.includedBuild("checker-framework") and pins libs.checkerFramework.*). To avoid pulling
+      # in that whole composite build, we treat the subproject directory as its own standalone root:
+      # we give it a settings.gradle (which makes Gradle ignore the parent build) that supplies the
+      # version catalog its build.gradle expects, then build it in place.
+      - name: Check out JSpecify reference checker
+        uses: actions/checkout@v6
+        with:
+          repository: jspecify/jspecify-reference-checker
+          path: jspecify-reference-checker
+      - name: Build and install conformance-test-framework
+        working-directory: jspecify-reference-checker
         run: |
-          printf 'allprojects { tasks.withType(Sign).configureEach { enabled = false } }\n' > "$RUNNER_TEMP/no-signing.gradle"
-          ./gradlew --init-script "$RUNNER_TEMP/no-signing.gradle" publishToMavenLocal
+          cat > conformance-test-framework/settings.gradle <<'SETTINGS'
+          rootProject.name = 'conformance-test-framework'
+          dependencyResolutionManagement {
+            versionCatalogs {
+              libs {
+                library('guava', 'com.google.guava:guava:33.6.0-jre')
+                library('jspecify', 'org.jspecify:jspecify:1.0.0')
+                library('truth', 'com.google.truth:truth:1.4.6')
+                library('junit', 'junit:junit:4.13.2')
+              }
+            }
+          }
+          SETTINGS
+          ./gradlew --project-dir conformance-test-framework \
+            --init-script "$RUNNER_TEMP/publish-helper.gradle" publishToMavenLocal
+
       - name: Build and Test
         run: gradle build test
