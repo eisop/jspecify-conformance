@@ -49,6 +49,16 @@ jobs:
             tasks.withType(Sign).configureEach { enabled = false }
           }
           INIT
+      # conformance-tests (the assertions/samples ZIP) comes from the main JSpecify repo.
+      - name: Check out JSpecify
+        uses: actions/checkout@v6
+        with:
+          repository: jspecify/jspecify
+          path: jspecify
+      - name: Build and install conformance-tests
+        working-directory: jspecify
+        run: ./gradlew --init-script "$RUNNER_TEMP/publish-helper.gradle" :conformance-tests:publishToMavenLocal
+      # conformance-test-framework
       - name: Check out JSpecify reference checker
         uses: actions/checkout@v6
         with:
