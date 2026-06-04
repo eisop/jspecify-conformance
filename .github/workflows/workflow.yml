@@ -41,6 +41,14 @@ jobs:
       # in that whole composite build, we treat the subproject directory as its own standalone root:
       # we give it a settings.gradle (which makes Gradle ignore the parent build) that supplies the
       # version catalog its build.gradle expects, then build it in place.
+      - name: Create publish-helper init script
+        run: |
+          cat > "$RUNNER_TEMP/publish-helper.gradle" <<'INIT'
+          allprojects {
+            pluginManager.apply('maven-publish')
+            tasks.withType(Sign).configureEach { enabled = false }
+          }
+          INIT
       - name: Check out JSpecify reference checker
         uses: actions/checkout@v6
         with:
@@ -49,7 +57,8 @@ jobs:
       - name: Build and install conformance-test-framework
         working-directory: jspecify-reference-checker
         run: |
-          ./gradlew --project-dir conformance-test-framework publishToMavenLocal
+          ./gradlew --project-dir conformance-test-framework \
+            --init-script "$RUNNER_TEMP/publish-helper.gradle" publishToMavenLocal
 
       - name: Build and Test
         run: gradle build test
