@@ -44,7 +44,7 @@ jobs:
       - name: Check out JSpecify reference checker
         uses: actions/checkout@v6
         with:
-          repository: jspecify/jspecify-reference-checker
+          repository: eisop/jspecify-reference-checker
           path: jspecify-reference-checker
       - name: Build and install conformance-test-framework
         working-directory: jspecify-reference-checker
