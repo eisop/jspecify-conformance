@@ -88,7 +88,7 @@ jobs:
               libs {
                 library('guava', 'com.google.guava:guava:33.6.0-jre')
                 library('jspecify', 'org.jspecify:jspecify:1.0.0')
-                library('truth', 'com.google.truth:truth:1.4.6')
+                library('truth', 'com.google.truth:truth:1.4.5')
                 library('junit', 'junit:junit:4.13.2')
               }
             }
