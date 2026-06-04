@@ -21,7 +21,7 @@ with the [EISOP Nullness Checker](https://eisop.github.io/cf/manual/#nullness-ch
 
 2. Gradle Assemble:
    ```bash
-   ./gradlew assmble
+   ./gradlew assemble
    ```
 
 3. Run the Tests:

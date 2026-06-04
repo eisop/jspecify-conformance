@@ -12,8 +12,23 @@ plugins {
 }
 
 repositories {
-  // Snapshot repository for JSpecify conformance test framework
-  maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
+  // The JSpecify conformance test framework and test suite are only ever published as
+  // 'org.jspecify.conformance:*:0.0.0-SNAPSHOT'. Central Portal snapshots are deleted after
+  // 90 days (https://central.sonatype.org/publish/publish-portal-snapshots/), so this remote
+  // snapshot can disappear whenever upstream stops re-publishing it. mavenLocal() lets us fall
+  // back to a copy that the build (see the CI workflow) publishes from a JSpecify checkout,
+  // which keeps the build reproducible regardless of the remote snapshot's lifetime.
+  mavenLocal()
+  // Snapshot repository for the JSpecify conformance test framework and test suite. Scope it to
+  // the 'org.jspecify.conformance' group so this repository is never consulted (or able to serve
+  // stale/unexpected artifacts) for any other dependency.
+  maven {
+    name = 'Central Portal Snapshots'
+    url = 'https://central.sonatype.com/repository/maven-snapshots/'
+    content {
+      includeGroup('org.jspecify.conformance')
+    }
+  }
   mavenCentral()
 }
 
@@ -33,6 +48,10 @@ dependencies {
 
   testImplementation libs.jspecify.conformance.framework
   jSpecifyConformanceTests libs.jspecify.conformance.tests
+
+  // The conformance test directly uses Guava (Splitter, ImmutableList/Set/SortedSet). Depend on it
+  // explicitly rather than relying on it leaking in transitively from the conformance framework.
+  testImplementation libs.guava
 }
 
 // To use a locally-built Checker Framework, run gradle with "-PcfLocal".
@@ -146,6 +165,13 @@ test {
     exceptionFormat = "full"
   }
 
+  // NOTE: addTestListener is NOT honored when the configuration cache is enabled
+  // (see https://github.com/gradle/gradle/issues/25311). Because this project enables the
+  // configuration cache in gradle.properties, the diagnostics below only run when the build is
+  // invoked with --no-configuration-cache. The `testLogging` block above is the configuration-cache
+  // -safe way to surface failures; this listener adds the extra "code around the failure" context
+  // for local debugging runs. A future change could move this to a BuildService-based
+  // OperationCompletionListener to make it configuration-cache compatible.
   addTestListener(new TestListener() {
         void beforeSuite(TestDescriptor suite) {}
         void afterSuite(TestDescriptor suite, TestResult result) {}

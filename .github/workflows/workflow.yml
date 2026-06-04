@@ -24,7 +24,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 21
-      - name: Set up JDK ${{ matrix.java.version }}
+      - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
@@ -33,5 +33,50 @@ jobs:
         run: mkdir ~/.gradle && echo "org.gradle.java.home=$JAVA_HOME_21_X64" >> ~/.gradle/gradle.properties
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+
+      # Build conformance test artifacts locally.
+      - name: Create publish-helper init script
+        run: |
+          cat > "$RUNNER_TEMP/publish-helper.gradle" <<'INIT'
+          allprojects {
+            pluginManager.apply('maven-publish')
+            tasks.withType(Sign).configureEach { enabled = false }
+          }
+          INIT
+      # conformance-tests (the assertions/samples ZIP) comes from the main JSpecify repo.
+      - name: Check out JSpecify
+        uses: actions/checkout@v6
+        with:
+          repository: jspecify/jspecify
+          path: jspecify
+      - name: Build and install conformance-tests
+        working-directory: jspecify
+        run: ./gradlew --init-script "$RUNNER_TEMP/publish-helper.gradle" :conformance-tests:publishToMavenLocal
+      # conformance-test-framework (the test driver) comes from the JSpecify reference checker.
+      - name: Check out JSpecify reference checker
+        uses: actions/checkout@v6
+        with:
+          repository: jspecify/jspecify-reference-checker
+          path: jspecify-reference-checker
+      # The settings.gradle isolates the sub-project and avoids building the CF.
+      - name: Build and install conformance-test-framework
+        working-directory: jspecify-reference-checker
+        run: |
+          cat > conformance-test-framework/settings.gradle <<'SETTINGS'
+          rootProject.name = 'conformance-test-framework'
+          dependencyResolutionManagement {
+            versionCatalogs {
+              libs {
+                library('guava', 'com.google.guava:guava:33.6.0-jre')
+                library('jspecify', 'org.jspecify:jspecify:1.0.0')
+                library('truth', 'com.google.truth:truth:1.4.5')
+                library('junit', 'junit:junit:4.13.2')
+              }
+            }
+          }
+          SETTINGS
+          ./gradlew --project-dir conformance-test-framework \
+            --init-script "$RUNNER_TEMP/publish-helper.gradle" publishToMavenLocal
+
       - name: Build and Test
         run: gradle build test
