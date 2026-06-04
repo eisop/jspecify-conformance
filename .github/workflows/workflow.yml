@@ -62,11 +62,24 @@ jobs:
       - name: Check out JSpecify reference checker
         uses: actions/checkout@v6
         with:
-          repository: eisop/jspecify-reference-checker
+          repository: jspecify/jspecify-reference-checker
           path: jspecify-reference-checker
       - name: Build and install conformance-test-framework
         working-directory: jspecify-reference-checker
         run: |
+          cat > conformance-test-framework/settings.gradle <<'SETTINGS'
+          rootProject.name = 'conformance-test-framework'
+          dependencyResolutionManagement {
+            versionCatalogs {
+              libs {
+                library('guava', 'com.google.guava:guava:33.6.0-jre')
+                library('jspecify', 'org.jspecify:jspecify:1.0.0')
+                library('truth', 'com.google.truth:truth:1.4.5')
+                library('junit', 'junit:junit:4.13.2')
+              }
+            }
+          }
+          SETTINGS
           ./gradlew --project-dir conformance-test-framework \
             --init-script "$RUNNER_TEMP/publish-helper.gradle" publishToMavenLocal
 
