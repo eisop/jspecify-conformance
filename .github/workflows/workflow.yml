@@ -16,7 +16,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Check out CF JSpecify Conformance Tests
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: jspecify-conformance
       - name: Set up JDK 21 for Gradle to run on
@@ -32,7 +32,7 @@ jobs:
       - name: Inject JAVA_HOME_21_64 into `gradle.properties` to always use JDK 21 for Gradle
         run: mkdir ~/.gradle && echo "org.gradle.java.home=$JAVA_HOME_21_X64" >> ~/.gradle/gradle.properties
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v6.2.0
 
       # Build conformance test artifacts locally.
       - name: Create publish-helper init script
@@ -45,7 +45,7 @@ jobs:
           INIT
       # conformance-tests (the assertions/samples ZIP) comes from the main JSpecify repo.
       - name: Check out JSpecify
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: jspecify/jspecify
           path: jspecify
@@ -54,7 +54,7 @@ jobs:
         run: ./gradlew --init-script "$RUNNER_TEMP/publish-helper.gradle" :conformance-tests:publishToMavenLocal
       # conformance-test-framework (the test driver) comes from the JSpecify reference checker.
       - name: Check out JSpecify reference checker
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: jspecify/jspecify-reference-checker
           path: jspecify-reference-checker
