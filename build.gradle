@@ -64,38 +64,23 @@ dependencies {
 // artifacts are the ones resolved. checker-qual and checker-util arrive transitively through
 // the checker POM.
 //
-// "-PcfLocal" does the same thing by reading jars out of the Checker Framework's build
-// directories with a fileTree. That requires framework-test/build/libs to hold exactly one jar,
-// which no Checker Framework task guarantees, and a shortfall surfaces as compilation errors in
-// this project's own source rather than as a missing dependency. Prefer -PcfVersion. -PcfLocal
-// remains only until eisop/checker-framework's test-jspecify-conformance.sh stops passing it,
-// and should be deleted then.
+// Checked at the top level of the script: inside a dependencies{} block, hasProperty binds to
+// the DependencyHandler and never reaches the project, so a check there silently reads false.
+if (hasProperty('cfLocal')) {
+  throw new GradleException(
+  '-PcfLocal is no longer supported. It read jars out of the Checker Framework\'s build\n'
+  + 'directories, which required a framework-test jar that no Checker Framework task builds.\n'
+  + 'Publish that checkout with "./gradlew publishToMavenLocal" and pass\n'
+  + '-PcfVersion=<its version> instead.')
+}
+
 dependencies {
+  // findProperty, not hasProperty: see the comment above.
   def cfVersion = findProperty('cfVersion')
   if (cfVersion) {
     testImplementation "io.github.eisop:checker:${cfVersion}"
     testImplementation "io.github.eisop:framework-test:${cfVersion}"
     testImplementation "io.github.eisop:checker-qual:${cfVersion}"
-  } else if (hasProperty('cfLocal')) {
-    // Deprecated; see above.
-    def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
-    testImplementation files(cfHome + '/checker/dist/checker.jar')
-    testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
-
-    def frameworkTestTree = fileTree(dir: cfHome + '/framework-test/build/libs',
-    include: '*.jar',
-    exclude: [
-      '*-sources.jar',
-      '*-javadoc.jar'
-    ])
-
-    if (frameworkTestTree.files.size() != 1) {
-      throw new GradleException("Expected exactly one framework-test jar in " + cfHome
-      + "/framework-test/build/libs, but found " + frameworkTestTree.files.size()
-      + ". Build it with './gradlew :framework-test:jar', or prefer -PcfVersion.")
-    }
-    testImplementation frameworkTestTree
-    testImplementation libs.plume.utils
   } else {
     testImplementation libs.checkerframework.checker
     testImplementation libs.checkerframework.framework.test
