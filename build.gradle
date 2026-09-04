@@ -64,12 +64,12 @@ dependencies {
 // artifacts are the ones resolved. checker-qual and checker-util arrive transitively through
 // the checker POM.
 //
-// "-PcfLocal" is the older form of this. It picked jars straight out of the Checker Framework's
-// build directories with a fileTree, which depended on those jars existing as a side effect of
-// an unrelated task: when framework-test's jar stopped being built, this reported the failure as
-// eleven "package org.checkerframework.framework.test does not exist" errors rather than as a
-// missing dependency. It is kept working only until eisop/checker-framework's
-// test-jspecify-conformance.sh stops passing it, and should then be deleted.
+// "-PcfLocal" does the same thing by reading jars out of the Checker Framework's build
+// directories with a fileTree. That requires framework-test/build/libs to hold exactly one jar,
+// which no Checker Framework task guarantees, and a shortfall surfaces as compilation errors in
+// this project's own source rather than as a missing dependency. Prefer -PcfVersion. -PcfLocal
+// remains only until eisop/checker-framework's test-jspecify-conformance.sh stops passing it,
+// and should be deleted then.
 dependencies {
   def cfVersion = findProperty('cfVersion')
   if (cfVersion) {
