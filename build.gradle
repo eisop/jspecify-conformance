@@ -54,10 +54,31 @@ dependencies {
   testImplementation libs.guava
 }
 
-// To use a locally-built Checker Framework, run gradle with "-PcfLocal".
-if (hasProperty('cfLocal')) {
-  def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
-  dependencies {
+// The Checker Framework artifacts come from the version in the version catalog by default.
+//
+// To test against a locally-built Checker Framework, publish it to the local Maven repository
+//     cd checker-framework && ./gradlew publishToMavenLocal
+// and run Gradle here with "-PcfVersion=<that build's version>", e.g.
+//     ./gradlew test -PcfVersion=3.49.5-eisop2-SNAPSHOT
+// mavenLocal() is already first in the repositories block above, so the freshly published
+// artifacts are the ones resolved. checker-qual and checker-util arrive transitively through
+// the checker POM.
+//
+// "-PcfLocal" is the older form of this. It picked jars straight out of the Checker Framework's
+// build directories with a fileTree, which depended on those jars existing as a side effect of
+// an unrelated task: when framework-test's jar stopped being built, this reported the failure as
+// eleven "package org.checkerframework.framework.test does not exist" errors rather than as a
+// missing dependency. It is kept working only until eisop/checker-framework's
+// test-jspecify-conformance.sh stops passing it, and should then be deleted.
+dependencies {
+  def cfVersion = findProperty('cfVersion')
+  if (cfVersion) {
+    testImplementation "io.github.eisop:checker:${cfVersion}"
+    testImplementation "io.github.eisop:framework-test:${cfVersion}"
+    testImplementation "io.github.eisop:checker-qual:${cfVersion}"
+  } else if (hasProperty('cfLocal')) {
+    // Deprecated; see above.
+    def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
     testImplementation files(cfHome + '/checker/dist/checker.jar')
     testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
 
@@ -69,13 +90,13 @@ if (hasProperty('cfLocal')) {
     ])
 
     if (frameworkTestTree.files.size() != 1) {
-      logger.warn("Expected exactly one framework-test jar, but found " + frameworkTestTree.files.size() + " jars.")
+      throw new GradleException("Expected exactly one framework-test jar in " + cfHome
+      + "/framework-test/build/libs, but found " + frameworkTestTree.files.size()
+      + ". Build it with './gradlew :framework-test:jar', or prefer -PcfVersion.")
     }
     testImplementation frameworkTestTree
     testImplementation libs.plume.utils
-  }
-} else {
-  dependencies {
+  } else {
     testImplementation libs.checkerframework.checker
     testImplementation libs.checkerframework.framework.test
     testImplementation libs.checkerframework.qual
