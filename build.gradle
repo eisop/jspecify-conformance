@@ -64,8 +64,11 @@ dependencies {
 // artifacts are the ones resolved. checker-qual and checker-util arrive transitively through
 // the checker POM.
 //
-// Checked at the top level of the script: inside a dependencies{} block, hasProperty binds to
-// the DependencyHandler and never reaches the project, so a check there silently reads false.
+// Both properties are read at the top level of the script. Inside a dependencies{} block the
+// closure delegate is the DependencyHandler, and Groovy resolves any name it defines there
+// rather than on the project: hasProperty is defined on every object, so it reads false no
+// matter what was passed. findProperty happens to fall through today, but reading both here
+// does not depend on that.
 if (hasProperty('cfLocal')) {
   throw new GradleException(
   '-PcfLocal is no longer supported. It read jars out of the Checker Framework\'s build\n'
@@ -74,9 +77,9 @@ if (hasProperty('cfLocal')) {
   + '-PcfVersion=<its version> instead.')
 }
 
+def cfVersion = findProperty('cfVersion')
+
 dependencies {
-  // findProperty, not hasProperty: see the comment above.
-  def cfVersion = findProperty('cfVersion')
   if (cfVersion) {
     testImplementation "io.github.eisop:checker:${cfVersion}"
     testImplementation "io.github.eisop:framework-test:${cfVersion}"
