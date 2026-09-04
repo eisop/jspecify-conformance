@@ -54,28 +54,37 @@ dependencies {
   testImplementation libs.guava
 }
 
-// To use a locally-built Checker Framework, run gradle with "-PcfLocal".
+// The Checker Framework artifacts come from the version in the version catalog by default.
+//
+// To test against a locally-built Checker Framework, publish it to the local Maven repository
+//     cd checker-framework && ./gradlew publishToMavenLocal
+// and run Gradle here with "-PcfVersion=<that build's version>", e.g.
+//     ./gradlew test -PcfVersion=3.49.5-eisop2-SNAPSHOT
+// mavenLocal() is already first in the repositories block above, so the freshly published
+// artifacts are the ones resolved. checker-qual and checker-util arrive transitively through
+// the checker POM.
+//
+// Both properties are read at the top level of the script. Inside a dependencies{} block the
+// closure delegate is the DependencyHandler, and Groovy resolves any name it defines there
+// rather than on the project: hasProperty is defined on every object, so it reads false no
+// matter what was passed. findProperty happens to fall through today, but reading both here
+// does not depend on that.
 if (hasProperty('cfLocal')) {
-  def cfHome = String.valueOf(System.getenv('CHECKERFRAMEWORK'))
-  dependencies {
-    testImplementation files(cfHome + '/checker/dist/checker.jar')
-    testImplementation files(cfHome + '/checker/dist/checker-qual.jar')
+  throw new GradleException(
+  '-PcfLocal is no longer supported. It read jars out of the Checker Framework\'s build\n'
+  + 'directories, which required a framework-test jar that no Checker Framework task builds.\n'
+  + 'Publish that checkout with "./gradlew publishToMavenLocal" and pass\n'
+  + '-PcfVersion=<its version> instead.')
+}
 
-    def frameworkTestTree = fileTree(dir: cfHome + '/framework-test/build/libs',
-    include: '*.jar',
-    exclude: [
-      '*-sources.jar',
-      '*-javadoc.jar'
-    ])
+def cfVersion = findProperty('cfVersion')
 
-    if (frameworkTestTree.files.size() != 1) {
-      logger.warn("Expected exactly one framework-test jar, but found " + frameworkTestTree.files.size() + " jars.")
-    }
-    testImplementation frameworkTestTree
-    testImplementation libs.plume.utils
-  }
-} else {
-  dependencies {
+dependencies {
+  if (cfVersion) {
+    testImplementation "io.github.eisop:checker:${cfVersion}"
+    testImplementation "io.github.eisop:framework-test:${cfVersion}"
+    testImplementation "io.github.eisop:checker-qual:${cfVersion}"
+  } else {
     testImplementation libs.checkerframework.checker
     testImplementation libs.checkerframework.framework.test
     testImplementation libs.checkerframework.qual
