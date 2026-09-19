@@ -56,7 +56,8 @@ jobs:
       - name: Check out JSpecify reference checker
         uses: actions/checkout@v7
         with:
-          repository: jspecify/jspecify-reference-checker
+          repository: eisop/jspecify-reference-checker
+          ref: main-eisop
           path: jspecify-reference-checker
       # The settings.gradle isolates the sub-project and avoids building the CF.
       - name: Build and install conformance-test-framework

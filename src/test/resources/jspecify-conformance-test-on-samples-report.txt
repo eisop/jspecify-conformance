@@ -1,10 +1,41 @@
-# 215 pass; 358 fail; 573 total; 37.5% score
+# 954 pass; 358 fail; 1,312 total; 72.7% score
+# (Note: The total includes 'optional error' assertions -- not_enough_information, conflicting_annotations, intrinsically_not_nullable, and unrecognized_location -- which never count toward pass/fail, since a conformant tool is never wrong to skip them. not_enough_information also never prints its own line below: the spec permits either an explicit warning or silence there equally, so there's no 'right' choice to nudge toward. The other three -- cases where an annotation lands somewhere the spec gives no meaning, and this checker specifically aims to flag them all -- do print, as PASS when backed by a diagnostic and MISS when not; MISS is not a failure, just a nudge to check whether this checker meant to report something there.)
+MISS: AnnotatedInnerOfNonParameterized.java:31:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfNonParameterized.java:35:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfNonParameterized.java:38:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfNonParameterized.java:42:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfNonParameterized.java:45:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfNonParameterized.java:53:jspecify_nullness_intrinsically_not_nullable
 PASS: AnnotatedInnerOfNonParameterized.java: no unexpected facts
+MISS: AnnotatedInnerOfParameterized.java:31:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfParameterized.java:35:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfParameterized.java:38:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfParameterized.java:42:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfParameterized.java:45:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedInnerOfParameterized.java:53:jspecify_nullness_intrinsically_not_nullable
 PASS: AnnotatedInnerOfParameterized.java: no unexpected facts
+MISS: AnnotatedReceiver.java:26:jspecify_nullness_intrinsically_not_nullable
+MISS: AnnotatedReceiver.java:29:jspecify_nullness_intrinsically_not_nullable
 PASS: AnnotatedReceiver.java: no unexpected facts
+MISS: AnnotatedTypeParameter.java:24:jspecify_unrecognized_location
+MISS: AnnotatedTypeParameter.java:27:jspecify_unrecognized_location
+MISS: AnnotatedTypeParameter.java:30:jspecify_unrecognized_location
 PASS: AnnotatedTypeParameter.java: no unexpected facts
+MISS: AnnotatedTypeParameterUnspec.java:23:jspecify_unrecognized_location
+MISS: AnnotatedTypeParameterUnspec.java:26:jspecify_unrecognized_location
+MISS: AnnotatedTypeParameterUnspec.java:29:jspecify_unrecognized_location
 PASS: AnnotatedTypeParameterUnspec.java: no unexpected facts
+MISS: AnnotatedWildcard.java:27:jspecify_unrecognized_location
+MISS: AnnotatedWildcard.java:30:jspecify_unrecognized_location
+MISS: AnnotatedWildcard.java:33:jspecify_unrecognized_location
+MISS: AnnotatedWildcard.java:36:jspecify_unrecognized_location
+MISS: AnnotatedWildcard.java:39:jspecify_unrecognized_location
 PASS: AnnotatedWildcard.java: no unexpected facts
+MISS: AnnotatedWildcardUnspec.java:26:jspecify_unrecognized_location
+MISS: AnnotatedWildcardUnspec.java:29:jspecify_unrecognized_location
+MISS: AnnotatedWildcardUnspec.java:32:jspecify_unrecognized_location
+MISS: AnnotatedWildcardUnspec.java:35:jspecify_unrecognized_location
+MISS: AnnotatedWildcardUnspec.java:38:jspecify_unrecognized_location
 PASS: AnnotatedWildcardUnspec.java: no unexpected facts
 FAIL: ArraySameType.java:35:jspecify_nullness_mismatch
 FAIL: ArraySameType.java:49:jspecify_nullness_mismatch
@@ -105,6 +136,8 @@ FAIL: ComplexParametric.java:259:jspecify_nullness_mismatch
 FAIL: ComplexParametric.java:263:jspecify_nullness_mismatch
 PASS: ComplexParametric.java: no unexpected facts
 PASS: ConcatResult.java: no unexpected facts
+MISS: ConflictingAnnotations.java:23:jspecify_conflicting_annotations
+MISS: ConflictingAnnotations.java:25:jspecify_conflicting_annotations
 PASS: ConflictingAnnotations.java: no unexpected facts
 PASS: Constants.java: no unexpected facts
 FAIL: ContainmentExtends.java:29:jspecify_nullness_mismatch
@@ -135,6 +168,8 @@ FAIL: DereferenceTypeVariable.java:119:jspecify_nullness_mismatch
 FAIL: DereferenceTypeVariable.java:125:jspecify_nullness_mismatch
 FAIL: DereferenceTypeVariable.java:131:jspecify_nullness_mismatch
 PASS: DereferenceTypeVariable.java: no unexpected facts
+MISS: EnumAnnotations.java:23:jspecify_nullness_intrinsically_not_nullable
+MISS: EnumAnnotations.java:26:jspecify_nullness_intrinsically_not_nullable
 PASS: EnumAnnotations.java: no unexpected facts
 FAIL: ExtendsSameType.java:39:jspecify_nullness_mismatch
 FAIL: ExtendsSameType.java:53:jspecify_nullness_mismatch
@@ -223,11 +258,39 @@ FAIL: NonNullProjection.java:24:jspecify_nullness_mismatch
 PASS: NonNullProjection.java: no unexpected facts
 FAIL: NonNullSimple.java:22:jspecify_nullness_mismatch
 PASS: NonNullSimple.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:29:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:33:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:36:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:40:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:43:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfNonParameterized.java:51:jspecify_nullness_intrinsically_not_nullable
 PASS: NotNullMarkedAnnotatedInnerOfNonParameterized.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:29:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:33:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:36:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:40:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:43:jspecify_nullness_intrinsically_not_nullable
+MISS: NotNullMarkedAnnotatedInnerOfParameterized.java:51:jspecify_nullness_intrinsically_not_nullable
 PASS: NotNullMarkedAnnotatedInnerOfParameterized.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedTypeParameter.java:22:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedTypeParameter.java:25:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedTypeParameter.java:28:jspecify_unrecognized_location
 PASS: NotNullMarkedAnnotatedTypeParameter.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedTypeParameterUnspec.java:21:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedTypeParameterUnspec.java:24:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedTypeParameterUnspec.java:27:jspecify_unrecognized_location
 PASS: NotNullMarkedAnnotatedTypeParameterUnspec.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedWildcard.java:25:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcard.java:28:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcard.java:31:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcard.java:34:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcard.java:37:jspecify_unrecognized_location
 PASS: NotNullMarkedAnnotatedWildcard.java: no unexpected facts
+MISS: NotNullMarkedAnnotatedWildcardUnspec.java:24:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcardUnspec.java:27:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcardUnspec.java:30:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcardUnspec.java:33:jspecify_unrecognized_location
+MISS: NotNullMarkedAnnotatedWildcardUnspec.java:36:jspecify_unrecognized_location
 PASS: NotNullMarkedAnnotatedWildcardUnspec.java: no unexpected facts
 PASS: NotNullMarkedClassToSelf.java: no unexpected facts
 PASS: NotNullMarkedConcatResult.java: no unexpected facts
@@ -317,7 +380,14 @@ PASS: OverrideParametersThatAreTypeVariables.java: no unexpected facts
 FAIL: OverrideReturns.java:57:jspecify_nullness_mismatch
 PASS: OverrideReturns.java: no unexpected facts
 PASS: ParameterizedWithTypeVariableArgumentToSelf.java: no unexpected facts
+MISS: PrimitiveAnnotations.java:23:jspecify_nullness_intrinsically_not_nullable
+MISS: PrimitiveAnnotations.java:25:jspecify_nullness_intrinsically_not_nullable
+MISS: PrimitiveAnnotations.java:31:jspecify_nullness_intrinsically_not_nullable
+MISS: PrimitiveAnnotations.java:35:jspecify_nullness_intrinsically_not_nullable
 PASS: PrimitiveAnnotations.java: no unexpected facts
+MISS: PrimitiveAnnotationsUnspec.java:24:jspecify_nullness_intrinsically_not_nullable
+MISS: PrimitiveAnnotationsUnspec.java:26:jspecify_nullness_intrinsically_not_nullable
+MISS: PrimitiveAnnotationsUnspec.java:32:jspecify_nullness_intrinsically_not_nullable
 PASS: PrimitiveAnnotationsUnspec.java: no unexpected facts
 FAIL: SameTypeObject.java:33:jspecify_nullness_mismatch
 FAIL: SameTypeObject.java:53:jspecify_nullness_mismatch
@@ -466,6 +536,14 @@ FAIL: UnionTypeArgumentWithUseSite.java:93:jspecify_nullness_mismatch
 FAIL: UnionTypeArgumentWithUseSite.java:97:jspecify_nullness_mismatch
 FAIL: UnionTypeArgumentWithUseSite.java:101:jspecify_nullness_mismatch
 PASS: UnionTypeArgumentWithUseSite.java: no unexpected facts
+MISS: UnrecognizedLocationsMisc.java:27:jspecify_nullness_intrinsically_not_nullable
+MISS: UnrecognizedLocationsMisc.java:29:jspecify_nullness_intrinsically_not_nullable
+MISS: UnrecognizedLocationsMisc.java:31:jspecify_nullness_intrinsically_not_nullable
+MISS: UnrecognizedLocationsMisc.java:37:jspecify_unrecognized_location
+MISS: UnrecognizedLocationsMisc.java:42:jspecify_unrecognized_location
+MISS: UnrecognizedLocationsMisc.java:45:jspecify_unrecognized_location
+MISS: UnrecognizedLocationsMisc.java:48:jspecify_unrecognized_location
+MISS: UnrecognizedLocationsMisc.java:52:jspecify_unrecognized_location
 PASS: UnrecognizedLocationsMisc.java: no unexpected facts
 FAIL: UnspecifiedClassTypeArgumentForNonNullableParameter.java:28:jspecify_nullness_mismatch
 PASS: UnspecifiedClassTypeArgumentForNonNullableParameter.java: no unexpected facts
