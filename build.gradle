@@ -8,7 +8,7 @@ plugins {
 
   // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
   // Requires JDK 11 or higher; the plugin crashes under JDK 8.
-  id 'com.diffplug.spotless' version '8.6.0'
+  id 'com.diffplug.spotless' version '8.10.2'
 }
 
 repositories {
@@ -107,7 +107,7 @@ spotless {
   }
   groovyGradle {
     target '**/*.gradle'
-    greclipse()  // which formatter Spotless should use to format .gradle files.
+    greclipse() // which formatter Spotless should use to format .gradle files.
     leadingTabsToSpaces(2)
     trimTrailingWhitespace()
     // endWithNewline() // Don't want to end empty files with a newline
@@ -153,7 +153,9 @@ test {
       "ConformanceTest.inputs": "${buildDirPath}/jspecify-conformance-tests/assertions/org/jspecify/conformance/tests",
       "ConformanceTest.report": "${projectDirPath}/src/test/resources/jspecify-conformance-test-report.txt",
       // listFiles() returns null if the directory doesn't exist; the null-safe operators return "" in that case.
-      "ConformanceTest.deps"  : new File("${buildDirPath}/jspecify-conformance-tests/deps").listFiles()?.collect { it.absolutePath }?.join(":") ?: ""
+      "ConformanceTest.deps" : new File("${buildDirPath}/jspecify-conformance-tests/deps").listFiles()?.collect {
+        it.absolutePath
+      }?.join(":") ?: ""
     ])
   }
 
@@ -208,7 +210,7 @@ test {
                   def start = Math.max(0, lineNumber - 3)
                   def end = Math.min(lines.size(), lineNumber + 2)
                   println "Code around the failure:"
-                  for (int i = start; i < end; i++) {
+                  (start..<end).each { i ->
                     println "${i + 1}: ${lines[i]}"
                   }
                   println ""
