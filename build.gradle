@@ -32,9 +32,25 @@ repositories {
   mavenCentral()
 }
 
-java {
-  sourceCompatibility = 1.9
-  targetCompatibility = 1.9
+def majorVersionToInt(majorVersionString) {
+  def m = majorVersionString =~ /^(\d+)/
+  majorVersionString = m ? m[0][0] : majorVersionString
+  return Integer.valueOf(majorVersionString)
+}
+
+String useJdkVersionProp = findProperty('useJdkVersion')
+if (useJdkVersionProp != null) {
+  int useJdkVersionInt = majorVersionToInt(useJdkVersionProp)
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(useJdkVersionInt)
+    }
+  }
+} else {
+  java {
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
+  }
 }
 
 configurations {
@@ -208,7 +224,7 @@ test {
                   def start = Math.max(0, lineNumber - 3)
                   def end = Math.min(lines.size(), lineNumber + 2)
                   println "Code around the failure:"
-                  for (int i = start; i < end; i++) {
+                  (start..<end).each { i ->
                     println "${i + 1}: ${lines[i]}"
                   }
                   println ""
