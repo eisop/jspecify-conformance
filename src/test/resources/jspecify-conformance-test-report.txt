@@ -1,4 +1,5 @@
 # 14 pass; 103 fail; 117 total; 12.0% score
+# (Note: The total includes 'optional error' assertions -- not_enough_information, conflicting_annotations, intrinsically_not_nullable, and unrecognized_location -- which never count toward pass/fail, since a conformant tool is never wrong to skip them. not_enough_information also never prints its own line below: the spec permits either an explicit warning or silence there equally, so there's no 'right' choice to nudge toward. The other three -- cases where an annotation lands somewhere the spec gives no meaning, and this checker specifically aims to flag them all -- do print, as PASS when backed by a diagnostic and MISS when not; MISS is not a failure, just a nudge to check whether this checker meant to report something there.)
 FAIL: Basic.java:28:test:expression-type:Object?:nullable
 FAIL: Basic.java:28:test:sink-type:Object!:return
 FAIL: Basic.java:28:test:cannot-convert:Object? to Object!
