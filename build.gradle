@@ -154,7 +154,7 @@ test {
       '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
       '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
       '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED'
-      )
+  )
 
   // Capture at configuration time to avoid referencing project in execution-time closures.
   def buildDirPath = layout.buildDirectory.get().asFile.absolutePath
@@ -238,5 +238,5 @@ test {
           }
         }
       }
-      ) // addTestListener
+  ) // addTestListener
 } // test
