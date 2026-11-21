@@ -107,12 +107,11 @@ public final class NullnessJSpecifyConformanceTest {
     TypecheckResult result = typecheckExecutor.runTest(testConfig);
     ImmutableSet<ReportedFact> reportedFacts =
         result.getUnexpectedDiagnostics().stream()
-            .map(
-                diagnostic ->
-                    new ReportedFactMessage(
-                        Path.of(diagnostic.getFilename()),
-                        diagnostic.getLineNumber(),
-                        diagnostic.getMessage()))
+            .map(diagnostic ->
+                new ReportedFactMessage(
+                    Path.of(diagnostic.getFilename()),
+                    diagnostic.getLineNumber(),
+                    diagnostic.getMessage()))
             .collect(toImmutableSet());
     return reportedFacts;
   }
