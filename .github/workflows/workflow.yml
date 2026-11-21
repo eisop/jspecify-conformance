@@ -1,14 +1,29 @@
 name: CI
 
-# Controls when the workflow will run
-on: [push, pull_request] 
+# A pull request runs once, for pull_request: running for push as well would run it twice.
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+    branches: [main]
+
+# Cancel a pull request's run when a newer commit is pushed to it; never cancel a run on main.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Default minimal permissions for all jobs.
+permissions:
+  contents: read
 
 jobs:
   # This job will build and test the JSpecify Conformance Tests on the Checker Framework
   build-and-test:
+    # The job name and the matrix key form the check name, e.g. "build-and-test (21)", that
+    # branch protection requires.
     strategy:
+      fail-fast: false
       matrix:
-        jdk: [ 11, 17, 21 ]
+        jdk: [11, 17, 21]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -22,12 +37,12 @@ jobs:
       - name: Set up JDK 21 for Gradle to run on
         uses: actions/setup-java@v6
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: 21
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v6
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: ${{matrix.jdk}}
       - name: Inject JAVA_HOME_21_64 into `gradle.properties` to always use JDK 21 for Gradle
         run: mkdir -p ~/.gradle && echo "org.gradle.java.home=$JAVA_HOME_21_X64" >> ~/.gradle/gradle.properties
